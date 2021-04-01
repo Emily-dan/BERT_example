@@ -54,9 +54,9 @@ def sentence_prediction(sentence):
     return outputs[0][0].cpu().detach().numpy()
 
 
-@app.route("/predict")
+@app.route("/predict", methods=['POST'])
 def predict():
-    sentence = request.args.get("sentence")
+    sentence = request.json.get("sentence")
     positive_pred = sentence_prediction(sentence)
     negative_pred = 1 - positive_pred
     response = {}
@@ -70,8 +70,8 @@ def predict():
 
 if __name__ == "__main__":
     MODEL = BERTBaseUncased()
-    MODEL = nn.DataParallel(MODEL)
-    MODEL.load_state_dict(torch.load(config.MODEL_PATH))
+    # MODEL = nn.DataParallel(MODEL)
+    # MODEL.load_state_dict(torch.load(config.MODEL_PATH))
     MODEL.to(DEVICE)
     MODEL.eval()
     app.run()
